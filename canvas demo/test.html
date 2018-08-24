@@ -1,0 +1,133 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+</head>
+<body>
+<canvas id="myCanvas" width="1000" height="800" style="margin-left:100px;">
+您的浏览器不支持画布功能！
+</canvas>
+<script >
+    var beginX=10;
+    var beginY=10;
+    var w = 60;
+    var h = 30;
+    var zindexX,zindexY;
+    var arr = [['编号', '姓名', '性别'],['1', '张三', '男'],['2', '李四', '男']]
+    var c=document.getElementById("myCanvas");
+    var cxt=c.getContext("2d");
+    cxt.font="16px Georgia";
+
+    // cxt.scale(0.5,0.5);
+    var lineX,lineY
+    //表格
+    function createBlock(x,y){
+        cxt.beginPath();
+        for(l=1;l<=arr.length;l++){
+            var child = arr[l-1]
+            for(r=1;r<=child.length;r++){
+                a=x+(r-1)*w;
+                b=y+(l-1)*h;
+                x_zuobiao=a+10;
+                y_zuobiao=b+10;
+                lineX = a+w
+                lineY = b-h/2
+                cxt.rect(a,b,w,h);
+                cxt.fillText(child[r-1],x_zuobiao,b+(h/2)+5);
+                cxt.strokeStyle = '#000000';
+                cxt.stroke();
+            };
+            cxt.strokeStyle = '#000000';
+            cxt.stroke();
+        };
+
+        for(l=1;l<=arr.length;l++){
+            var child = arr[l-1]
+            for(r=1;r<=child.length;r++){
+                a=x+(r-1)*w+300;
+                b=y+(l-1)*h;
+                x_zuobiao=a+10;
+                y_zuobiao=b+10;
+                cxt.rect(a,b,w,h);
+                cxt.fillText(child[r-1],x_zuobiao,b+(h/2)+5);
+                cxt.strokeStyle = '#000000';
+                cxt.stroke();
+            };
+            cxt.strokeStyle = '#000000';
+            cxt.stroke();
+        };
+        cxt.stroke();
+        cxt.strokeStyle = 'red';
+        cxt.moveTo(lineX,lineY);
+        cxt.lineTo(lineX+20,lineY);
+        cxt.lineTo(lineX+300-3*w-20,lineY+30);
+        cxt.lineTo(lineX+300-3*w,lineY+30);
+        cxt.stroke();
+    };
+    
+    //鼠标按下，将鼠标按下坐标保存在x,y中
+    createBlock(50,50);
+    c.onmousedown = function(ev){
+        var e = ev||event;
+        var x = e.layerX;
+        var y = e.layerY;
+        drag(x,y,cxt,c);
+    };
+
+    //拖拽函数
+    function drag(x,y,cxt,c){
+        if(cxt.isPointInPath(x,y)){
+            //路径正确，鼠标移动事件
+            c.onmousemove = function(ev){
+                var e = ev||event;
+                var ax = e.layerX;
+                var ay = e.layerY;
+                //鼠标移动每一帧都清楚画布内容，然后重新画圆
+                cxt.clearRect(0,0,c.width,c.height);
+                // cxt.translate(25,25);
+                cxt.restore()
+                createBlock(ax,ay);
+
+            };
+            //鼠标移开事件
+            c.onmouseup = function(){
+                c.onmousemove = null;
+                c.onmouseup = null;
+            };
+        };
+    };
+
+  function onMouseWheel(ev) { /*当鼠标滚轮事件发生时，执行一些操作*/
+    var ev = ev || window.event;
+    var down = true; // 定义一个标志，当滚轮向下滚时，执行一些操作
+    per = 1;
+    down = ev.wheelDelta ? ev.wheelDelta < 0 : ev.detail > 0;
+    if (down) {
+      per += 0.05;
+    } else {
+      per -= 0.05;
+    }
+    zindexX = (ev.layerX)*(1-1/parseFloat(per));
+    zindexY = (ev.layerY)*(1-1/parseFloat(per));
+    cxt.scale(parseFloat(per),parseFloat(per));
+    cxt.clearRect(zindexX,zindexY,c.width,c.height);
+     createBlock(ev.clientX/2,ev.clientY/2);
+    if (ev.preventDefault) { /*FF 和 Chrome*/
+      ev.preventDefault(); // 阻止默认事件
+    }
+    return false;
+  }
+  addEvent(c, 'mousewheel', onMouseWheel);
+  addEvent(c, 'DOMMouseScroll', onMouseWheel)
+  
+  function addEvent(obj, xEvent, fn) {
+      if (obj.attachEvent) {
+        obj.attachEvent('on' + xEvent, fn);
+      } else {
+        obj.addEventListener(xEvent, fn, false);
+      }
+    }
+</script>
+
+</body>
+</html>
