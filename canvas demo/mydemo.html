@@ -10,7 +10,7 @@
 		var myCanvas = document.getElementById('myCanvas')
 		myCanvas.width = '1000'
 		myCanvas.height = '600'
-		myCanvas.style.backgroundColor= "yellow"
+		// myCanvas.style.backgroundColor= "yellow"
 
 		var _ctx = myCanvas.getContext('2d')
 
@@ -82,6 +82,18 @@
             start_angle += slice_angle;
             color_index++;
         }
+
+        if (this.options.doughnutHoleSize) {
+        	drawPieSlice(
+        		this.ctx,
+        		this.canvas.width/2,
+        		this.canvas.height/2,
+        		this.options.doughnutHoleSize * Math.min(this.canvas.width/2, this.canvas.height/2),
+        		0,
+        		2 * Math.PI,
+        		'#fff'
+        	)
+        }
     }
 
 	}
@@ -89,7 +101,8 @@
 	var options = {
 		canvas: myCanvas,
 		colors:["#fde23e","#f16e23", "#57d9ff","#937e88"],
-		data: myData
+		data: myData,
+		doughnutHoleSize: 0.5
 	}
 	var myPiechart = new Piechart(options)
 	myPiechart.draw()
